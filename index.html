@@ -92,6 +92,10 @@ footer { display: flex; flex-direction: column; gap: 56px; padding-top: 24px; bo
 .project:hover .more, .project .more:focus-visible { color: var(--blue); border-color: var(--blue); }
 .project .more:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
 
+.project .thumb { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 8px; border: 1px solid var(--line); display: block; transition: transform .25s ease, box-shadow .25s ease; }
+.project:hover .thumb { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(17, 24, 39, .12); }
+.detail-img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 8px; border: 1px solid var(--line); display: block; }
+.detail-img[hidden] { display: none; }
 dialog.detail { width: min(820px, calc(100vw - 32px)); max-height: calc(100vh - 48px); padding: 0; border: 1px solid var(--ink); border-radius: 10px; background: #fff; color: var(--ink); box-shadow: 0 30px 80px rgba(17, 24, 39, .18); }
 dialog.detail::backdrop { background: rgba(17, 24, 39, .45); backdrop-filter: blur(3px); }
 dialog.detail[open] { animation: pop .22s ease; }
@@ -108,6 +112,8 @@ dialog.detail[open] { animation: pop .22s ease; }
 .detail section p { margin: 0; font-size: 17px; line-height: 1.65; color: var(--body); }
 .detail ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 17px; line-height: 1.6; color: var(--body); }
 .detail ul li::marker { color: var(--blue); }
+.detail a.inline { color: var(--ink); border-bottom: 1.5px solid var(--blue); }
+.detail a.inline:hover { color: var(--blue); }
 body.locked { overflow: hidden; }
 @media (max-width: 640px) {
   .detail-inner { padding: 32px 24px 36px; }
@@ -190,10 +196,11 @@ body.locked { overflow: hidden; }
       </div>
       <button class="close" type="button" aria-label="Close" id="detail-close"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
     </div>
+    <img class="detail-img" id="detail-img" alt="">
     <div class="plinks" id="detail-links"></div>
     <div id="detail-body" style="display: flex; flex-direction: column; gap: 28px"></div>
     <section>
-      <h4>Tech stack</h4>
+      <h4 id="detail-tags-label">Tech stack</h4>
       <div class="tags" id="detail-tags"></div>
     </section>
   </div>
@@ -213,7 +220,7 @@ const projects = [
     ]
   },
   {
-    id: 'lowball', name: 'Lowball',
+    id: 'lowball', img: 'images/lowball.jpg', imgAlt: 'Lowball showing three live negotiations side by side', name: 'Lowball',
     desc: 'A negotiation agent for manufacturers that remembers every customer. It keeps a graph of past deals and calls, adapts its tactics to each buyer, and hands the deal to a person when things start going badly.',
     tags: ['Python', 'AI agents', 'Flask', 'OpenAI API', 'Kùzu graph DB', 'ElevenLabs', 'Docker'],
     links: [['Code', 'https://github.com/riaseth1/Lowball']],
@@ -224,7 +231,7 @@ const projects = [
     ]
   },
   {
-    id: 'waypoint', name: 'Waypoint',
+    id: 'waypoint', img: 'images/waypoint.jpg', imgAlt: 'Waypoint sign-in page with the visa deadline team', name: 'Waypoint',
     desc: 'A team of Grok Bots that watches international students’ visa deadlines overnight, counts the days in code, and sends one morning brief with emails already drafted. Won first place at the Berkeley × Stanford Grok Bot Hackathon.',
     tags: ['JavaScript', 'Node.js', 'AI agents', 'Grok Bots', 'MCP', 'Redis', 'Twilio', 'Docker'],
     links: [['Live demo', 'https://waypoint-5o4r.onrender.com'], ['Code', 'https://github.com/riaseth1/Waypoint']],
@@ -235,7 +242,7 @@ const projects = [
     ]
   },
   {
-    id: 'lifeboat', name: 'Lifeboat',
+    id: 'lifeboat', img: 'images/lifeboat.jpg', imgAlt: 'Lifeboat banner: a lifeboat dangles a fake key that a robot shark bites', name: 'Lifeboat',
     desc: 'Security for AI startups without a security team. It leaves bait only an automated attacker would follow, locks things down in under a second when it bites, then has Claude investigate while a person approves anything permanent.',
     tags: ['Python', 'AI agents', 'Claude API', 'Ollama', 'Incident response'],
     links: [['Code', 'https://github.com/riaseth1/LifeBoat']], note: 'Live demo paused',
@@ -247,7 +254,7 @@ const projects = [
     ]
   },
   {
-    id: 'cyberboot', name: 'CyberBoot',
+    id: 'cyberboot', img: 'images/cyberboot.jpg', imgAlt: 'CyberBoot welcome screen', name: 'CyberBoot',
     desc: 'An interactive cybersecurity bootcamp with phishing and password activities, a quiz, and a certificate at the end.',
     tags: ['JavaScript', 'HTML', 'CSS'],
     links: [['Live site', 'https://riaseth1.github.io/CyberBoot/'], ['Code', 'https://github.com/riaseth1/CyberBoot']],
@@ -258,14 +265,26 @@ const projects = [
     ]
   },
   {
-    id: 'c4y', name: 'Cyber for Youth',
+    id: 'c4y', img: 'images/cyberforyouth.jpg', imgAlt: 'Cyber for Youth website homepage', name: 'Cyber for Youth', tagsLabel: 'Skills',
     desc: 'I founded Cyber for Youth, a student-run nonprofit that teaches kids how to stay safe online, from scams to cyberbullying.',
     tags: ['Nonprofit leadership', 'Public speaking', 'Curriculum design', 'Workshops', 'Fundraising', 'Partnerships', 'Policy advocacy', 'Google Apps Script'],
     links: [['Website', 'https://cyberforyouth.org']],
     sections: [
-      ['What it is', 'A student-run nonprofit that teaches kids and teens how to stay safe online, covering cyberbullying, scams and sextortion. It’s run by students, for students, and the programs are free.'],
-      ['What we do', ['In-person workshops for elementary and middle school students', 'Cyber Academy, a learning platform, plus a story series, a game and a digital habits quiz', 'A student podcast about online safety', 'AI literacy workshops for students']],
-      ['Where it is now', '500+ members and 80+ volunteers across 32 countries, more than 32,000 workshop participants, and a cyberbullying policy passed in my school district.']
+      ['Turning my experience into something bigger', { paras: [
+        'When I was 14, an anonymous Instagram account leaked my home address, and I began receiving threats. Something as simple as hearing my doorbell ring became terrifying. When I turned to my school for help, I was told that what happened online was outside their jurisdiction.',
+        'But I knew I wasn’t the only one experiencing this, and I couldn’t accept that nothing could be done.',
+        'That’s how Cyber for Youth began. What started as an effort to change my school district’s cyberbullying policy grew into a global youth-led nonprofit.',
+        'At its core, Cyber for Youth is about creating the resources I wish I had growing up. I want young people to feel empowered by technology, not afraid of it.'
+      ] }],
+      ['What we do', [
+        ['Workshops and events', 'https://www.cyberforyouth.org/workshops-and-events', ' on cyberbullying, scams and staying safe online, led by students for kids and teens'],
+        ['Curriculum', 'https://www.cyberforyouth.org/curriculum', ': free online safety lessons that schools and teachers can use in class'],
+        ['Sam’s Case of the Mysterious Message', 'https://www.cyberforyouth.org/book', ': our children’s book for 3rd to 5th graders, with activities built in'],
+        ['Articles', 'https://www.cyberforyouth.org/blogs', ' and ', 'Research reports', 'https://www.cyberforyouth.org/research-reports', ' on youth online safety'],
+        ['Podcast', 'https://www.cyberforyouth.org/podcast', ': a student-run show about growing up online'],
+        ['Ambassadors and chapters', 'https://www.cyberforyouth.org/ambassadorprogram', ' that bring workshops to new schools and cities']
+      ]],
+      ['Where it is now', 'We’ve grown to 5M+ users, with 500+ members and 80+ volunteers across 32 countries and 32,000+ workshop participants. Our advocacy has helped pass cyberbullying policies and required online safety curricula covering 11,000+ students and instructors.']
     ]
   }
 ];
@@ -286,6 +305,8 @@ const dlg = document.getElementById('detail');
 function openProject(p, push = true) {
   document.getElementById('detail-title').textContent = p.name;
   document.getElementById('detail-summary').textContent = p.desc;
+  const dimg = document.getElementById('detail-img');
+  if (p.img) { dimg.src = p.img; dimg.alt = p.imgAlt || ''; dimg.hidden = false; } else { dimg.removeAttribute('src'); dimg.hidden = true; }
   const links = document.getElementById('detail-links');
   links.replaceChildren();
   p.links.forEach(([label, href]) => { const a = el('a', null, label + ' ↗'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; links.append(a); });
@@ -297,13 +318,25 @@ function openProject(p, push = true) {
     sec.append(el('h4', null, h));
     if (Array.isArray(content)) {
       const ul = el('ul');
-      content.forEach(item => ul.append(el('li', null, item)));
+      content.forEach(item => {
+        if (typeof item === 'string') { ul.append(el('li', null, item)); return; }
+        const li = el('li');
+        for (let k = 0; k < item.length; k += 3) {
+          const a = el('a', 'inline', item[k]); a.href = item[k + 1]; a.target = '_blank'; a.rel = 'noopener';
+          li.append(a);
+          if (item[k + 2]) li.append(document.createTextNode(item[k + 2]));
+        }
+        ul.append(li);
+      });
       sec.append(ul);
+    } else if (content && content.paras) {
+      content.paras.forEach(t => sec.append(el('p', null, t)));
     } else {
       sec.append(el('p', null, content));
     }
     return sec;
   }));
+  document.getElementById('detail-tags-label').textContent = p.tagsLabel || 'Tech stack';
   const tags = document.getElementById('detail-tags');
   tags.replaceChildren(...p.tags.map(t => el('span', 'tag', t)));
   if (!dlg.open) dlg.showModal();
@@ -327,7 +360,9 @@ document.getElementById('project-list').replaceChildren(...projects.map(p => {
   const more = el('button', 'more', 'View project →');
   more.type = 'button';
   more.setAttribute('aria-label', 'View details for ' + p.name);
-  left.append(el('h3', null, p.name), more);
+  left.append(el('h3', null, p.name));
+  if (p.img) { const im = el('img', 'thumb'); im.src = p.img; im.alt = p.imgAlt || ''; im.loading = 'lazy'; left.append(im); }
+  left.append(more);
   const right = el('div', 'right');
   const tags = el('div', 'tags');
   p.tags.forEach(t => tags.append(el('span', 'tag', t)));
