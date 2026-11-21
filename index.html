@@ -87,6 +87,33 @@ footer { display: flex; flex-direction: column; gap: 56px; padding-top: 24px; bo
 .big-link span { color: var(--blue); }
 .fine { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
 
+.project { cursor: pointer; }
+.project .more { align-self: flex-start; font: inherit; font-size: 15px; color: var(--muted); background: none; border: 0; padding: 0; cursor: pointer; border-bottom: 1.5px solid transparent; padding-bottom: 2px; transition: color .2s ease, border-color .2s ease; }
+.project:hover .more, .project .more:focus-visible { color: var(--blue); border-color: var(--blue); }
+.project .more:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
+
+dialog.detail { width: min(820px, calc(100vw - 32px)); max-height: calc(100vh - 48px); padding: 0; border: 1px solid var(--ink); border-radius: 10px; background: #fff; color: var(--ink); box-shadow: 0 30px 80px rgba(17, 24, 39, .18); }
+dialog.detail::backdrop { background: rgba(17, 24, 39, .45); backdrop-filter: blur(3px); }
+dialog.detail[open] { animation: pop .22s ease; }
+@keyframes pop { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.detail-inner { padding: 48px 52px 52px; display: flex; flex-direction: column; gap: 28px; }
+.detail-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+.detail h2 { font-size: 44px; line-height: 1.05; }
+.detail .summary { margin: 10px 0 0; font-size: 19px; line-height: 1.55; color: var(--body); }
+.close { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--line); background: #fff; cursor: pointer; display: grid; place-items: center; transition: border-color .2s ease; }
+.close:hover { border-color: var(--ink); }
+.detail .plinks { font-size: 16px; gap: 22px; }
+.detail section { display: flex; flex-direction: column; gap: 10px; }
+.detail h4 { margin: 0; font-family: var(--head); font-weight: 500; font-size: 20px; letter-spacing: -0.02em; }
+.detail section p { margin: 0; font-size: 17px; line-height: 1.65; color: var(--body); }
+.detail ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 17px; line-height: 1.6; color: var(--body); }
+.detail ul li::marker { color: var(--blue); }
+body.locked { overflow: hidden; }
+@media (max-width: 640px) {
+  .detail-inner { padding: 32px 24px 36px; }
+  .detail h2 { font-size: 34px; }
+}
+
 @media (max-width: 900px) {
   .project { grid-template-columns: 1fr; }
 }
@@ -154,14 +181,93 @@ footer { display: flex; flex-direction: column; gap: 56px; padding-top: 24px; bo
 
 </div>
 
+<dialog class="detail" id="detail" aria-labelledby="detail-title">
+  <div class="detail-inner">
+    <div class="detail-top">
+      <div>
+        <h2 id="detail-title"></h2>
+        <p class="summary" id="detail-summary"></p>
+      </div>
+      <button class="close" type="button" aria-label="Close" id="detail-close"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
+    </div>
+    <div class="plinks" id="detail-links"></div>
+    <div id="detail-body" style="display: flex; flex-direction: column; gap: 28px"></div>
+    <section>
+      <h4>Tech stack</h4>
+      <div class="tags" id="detail-tags"></div>
+    </section>
+  </div>
+</dialog>
+
 <script>
 const projects = [
-  { name: 'NVIDIA AgentOps', desc: 'A dashboard that shows what a fleet of hundreds of AI coding agents is doing, why, and what’s stuck, with a daily standup view, host health with time-to-full forecasts, failure and cost tracking by model, and a drill-down into any agent’s session.', tags: ['React', 'TypeScript', 'AI agents', 'Data visualization', 'FastAPI', 'PostgreSQL', 'Python', 'Vercel'], links: [], note: 'Private client project' },
-  { name: 'Lowball', desc: 'A negotiation agent for manufacturers that remembers every customer. It keeps a graph of past deals and calls, adapts its tactics to each buyer, and hands the deal to a person when things start going badly.', tags: ['Python', 'AI agents', 'Flask', 'OpenAI API', 'Kùzu graph DB', 'ElevenLabs', 'Docker'], links: [['Code', 'https://github.com/riaseth1/Lowball']] },
-  { name: 'Waypoint', desc: 'A team of Grok Bots that watches international students’ visa deadlines overnight, counts the days in code, and sends one morning brief with emails already drafted. Won first place at the Berkeley × Stanford Grok Bot Hackathon.', tags: ['JavaScript', 'Node.js', 'AI agents', 'Grok Bots', 'MCP', 'Redis', 'Twilio', 'Docker'], links: [['Live demo', 'https://waypoint-5o4r.onrender.com'], ['Code', 'https://github.com/riaseth1/Waypoint']] },
-  { name: 'Lifeboat', desc: 'Security for AI startups without a security team. It leaves bait only an automated attacker would follow, locks things down in under a second when it bites, then has Claude investigate while a person approves anything permanent.', tags: ['Python', 'AI agents', 'Claude API', 'Ollama', 'Incident response'], links: [['Code', 'https://github.com/riaseth1/LifeBoat']], note: 'Live demo paused' },
-  { name: 'CyberBoot', desc: 'An interactive cybersecurity bootcamp with phishing and password activities, a quiz, and a certificate at the end.', tags: ['JavaScript', 'HTML', 'CSS'], links: [['Live site', 'https://riaseth1.github.io/CyberBoot/'], ['Code', 'https://github.com/riaseth1/CyberBoot']] },
-  { name: 'Cyber for Youth', desc: 'I founded Cyber for Youth, a student-run nonprofit that teaches kids how to stay safe online, from scams to cyberbullying.', tags: ['Nonprofit leadership', 'Public speaking', 'Curriculum design', 'Workshops', 'Fundraising', 'Partnerships', 'Policy advocacy', 'Google Apps Script'], links: [['Website', 'https://cyberforyouth.org']] }
+  {
+    id: 'agentops', name: 'NVIDIA AgentOps',
+    desc: 'A dashboard that shows what a fleet of hundreds of AI coding agents is doing, why, and what’s stuck, with a daily standup view, host health with time-to-full forecasts, failure and cost tracking by model, and a drill-down into any agent’s session.',
+    tags: ['React', 'TypeScript', 'AI agents', 'Data visualization', 'FastAPI', 'PostgreSQL', 'Python', 'Vercel'],
+    links: [], note: 'Private client project',
+    sections: [
+      ['The problem', 'Hundreds of AI coding agents (Claude Code, Codex and Cursor) run around the clock across several machines, building and fixing a cloud service on their own. Everything they do lives in terminal sessions and one very long Slack thread, so the people running them can’t quickly answer simple questions like what each agent is working on or which ones are stuck.'],
+      ['What it does', ['A daily standup page: what each agent is doing now, what it did yesterday, and what’s blocking it', 'Host health: CPU, memory, disk, inode and socket usage with warnings at 80% and 90%, plus forecasts of when a machine will fill up', 'Failures, latency, error rate and cost broken down by model and provider', 'A drill-down into any agent’s full session, plus bug tracking, team budgets, access control and an audit log']],
+      ['How it works', 'A small collector on each machine reads the agents’ session logs as they’re written and sends summaries to a FastAPI and Postgres backend. Simple rules flag agents that look stuck, like repeating the same command or making no progress for a long time, and a small model writes a one-line status for each agent in plain English.']
+    ]
+  },
+  {
+    id: 'lowball', name: 'Lowball',
+    desc: 'A negotiation agent for manufacturers that remembers every customer. It keeps a graph of past deals and calls, adapts its tactics to each buyer, and hands the deal to a person when things start going badly.',
+    tags: ['Python', 'AI agents', 'Flask', 'OpenAI API', 'Kùzu graph DB', 'ElevenLabs', 'Docker'],
+    links: [['Code', 'https://github.com/riaseth1/Lowball']],
+    sections: [
+      ['The problem', 'A manufacturer can have thousands of customers, and each one negotiates differently. Some grind hard, some agree fast, some stall. A sales team can’t remember every buyer’s habits, and a generic negotiation bot treats them all the same.'],
+      ['What it does', ['Negotiates prices with each customer over chat or voice', 'Remembers every customer: their style, past deals, past calls and which tactics worked', 'Borrows tactics that worked on similar customers', 'Hands the deal to a person when a customer’s results keep getting worse']],
+      ['How it works', 'Memory lives in a Kùzu graph with a built-in vector index that connects customers, deals, calls and tactics. Before a negotiation the agent pulls that customer’s context, and afterward it saves a short summary and a score. Guardrails live in code, not in the model: it never quotes below the floor price and always proposes a next step. A Flask dashboard shows live negotiations side by side and a 3D view of the memory graph.']
+    ]
+  },
+  {
+    id: 'waypoint', name: 'Waypoint',
+    desc: 'A team of Grok Bots that watches international students’ visa deadlines overnight, counts the days in code, and sends one morning brief with emails already drafted. Won first place at the Berkeley × Stanford Grok Bot Hackathon.',
+    tags: ['JavaScript', 'Node.js', 'AI agents', 'Grok Bots', 'MCP', 'Redis', 'Twilio', 'Docker'],
+    links: [['Live demo', 'https://waypoint-5o4r.onrender.com'], ['Code', 'https://github.com/riaseth1/Waypoint']],
+    sections: [
+      ['The problem', 'For most students a missed deadline costs points. For an international student it can cost the right to stay in the country. Every visa has its own clock, the rules change when a student’s status changes, and none of the government sites they have to check have alerts.'],
+      ['What it does', ['Every night a Manager Bot wakes up a team of workers', 'One reads the government case-status site, another searches X, official pages and the student’s email for rule changes and dates', 'Waypoint’s own code counts the days and marks each deadline Act now, Watch or Clear, so the AI never does date math', 'The student wakes up to one brief, and nothing is sent to another person until they approve it']],
+      ['How it works', 'Five Grok Bots (Manager, Case Clerk, Scout, Messenger and Intake Clerk) each have one job and connect to Waypoint through an MCP connector. The site is a dependency-free Node app on Render, data is saved in Upstash Redis, and texts go out through Twilio.']
+    ]
+  },
+  {
+    id: 'lifeboat', name: 'Lifeboat',
+    desc: 'Security for AI startups without a security team. It leaves bait only an automated attacker would follow, locks things down in under a second when it bites, then has Claude investigate while a person approves anything permanent.',
+    tags: ['Python', 'AI agents', 'Claude API', 'Ollama', 'Incident response'],
+    links: [['Code', 'https://github.com/riaseth1/LifeBoat']], note: 'Live demo paused',
+    sections: [
+      ['The problem', 'Attackers are starting to use AI agents that move faster than any person can respond. Small AI startups hold customer data, private models and cloud keys, and most have no one watching at 2am.'],
+      ['The idea', 'AI agents act on text they find. So Lifeboat leaves bait that only an automated attacker would follow, like a note asking agents to register at an internal URL and a fake cloud key planted next to the real ones. The moment something takes the bait, Lifeboat responds.'],
+      ['What happens next', ['Reflex, with no AI and in under half a second: isolate the machine, suspend the identity, quarantine the data. Every automatic action can be undone', 'Investigate: Claude rebuilds the timeline, measures the damage and writes the incident report', 'Approve: anything permanent, like rotating real keys, waits for a person in Slack']],
+      ['Privacy', 'Raw logs never leave the company’s machine. A local model reads the evidence first, secrets are stripped out, and Claude only sees cleaned-up findings. In a replayed simulated attack, the same breach went from about 250 customer files read to zero.']
+    ]
+  },
+  {
+    id: 'cyberboot', name: 'CyberBoot',
+    desc: 'An interactive cybersecurity bootcamp with phishing and password activities, a quiz, and a certificate at the end.',
+    tags: ['JavaScript', 'HTML', 'CSS'],
+    links: [['Live site', 'https://riaseth1.github.io/CyberBoot/'], ['Code', 'https://github.com/riaseth1/CyberBoot']],
+    sections: [
+      ['The problem', 'There wasn\u2019t much interactive security training out there, and most of what existed was just boring slides and videos that nobody remembers.'],
+      ['What it is', 'A hands-on online safety course that runs in the browser. Instead of reading about scams, you practice spotting them.'],
+      ['What’s inside', ['A practice inbox where you decide which emails are phishing', 'Chat scenarios where you choose the safest reply', 'A password checker that shows how strong your password is', 'A quiz with a running score, and a certificate with your name when you finish']]
+    ]
+  },
+  {
+    id: 'c4y', name: 'Cyber for Youth',
+    desc: 'I founded Cyber for Youth, a student-run nonprofit that teaches kids how to stay safe online, from scams to cyberbullying.',
+    tags: ['Nonprofit leadership', 'Public speaking', 'Curriculum design', 'Workshops', 'Fundraising', 'Partnerships', 'Policy advocacy', 'Google Apps Script'],
+    links: [['Website', 'https://cyberforyouth.org']],
+    sections: [
+      ['What it is', 'A student-run nonprofit that teaches kids and teens how to stay safe online, covering cyberbullying, scams and sextortion. It’s run by students, for students, and the programs are free.'],
+      ['What we do', ['In-person workshops for elementary and middle school students', 'Cyber Academy, a learning platform, plus a story series, a game and a digital habits quiz', 'A student podcast about online safety', 'AI literacy workshops for students']],
+      ['Where it is now', '500+ members and 80+ volunteers across 32 countries, more than 32,000 workshop participants, and a cyberbullying policy passed in my school district.']
+    ]
+  }
 ];
 
 const skills = [
@@ -175,20 +281,64 @@ const skills = [
 
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 
+const dlg = document.getElementById('detail');
+
+function openProject(p, push = true) {
+  document.getElementById('detail-title').textContent = p.name;
+  document.getElementById('detail-summary').textContent = p.desc;
+  const links = document.getElementById('detail-links');
+  links.replaceChildren();
+  p.links.forEach(([label, href]) => { const a = el('a', null, label + ' ↗'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; links.append(a); });
+  if (p.note) links.append(el('span', 'note', p.note));
+  links.hidden = !p.links.length && !p.note;
+  const body = document.getElementById('detail-body');
+  body.replaceChildren(...p.sections.map(([h, content]) => {
+    const sec = el('section');
+    sec.append(el('h4', null, h));
+    if (Array.isArray(content)) {
+      const ul = el('ul');
+      content.forEach(item => ul.append(el('li', null, item)));
+      sec.append(ul);
+    } else {
+      sec.append(el('p', null, content));
+    }
+    return sec;
+  }));
+  const tags = document.getElementById('detail-tags');
+  tags.replaceChildren(...p.tags.map(t => el('span', 'tag', t)));
+  if (!dlg.open) dlg.showModal();
+  dlg.querySelector('.detail-inner').scrollTop = 0;
+  dlg.scrollTop = 0;
+  document.body.classList.add('locked');
+  if (push) history.replaceState(null, '', '#' + p.id);
+}
+
+function closeProject() { if (dlg.open) dlg.close(); }
+dlg.addEventListener('close', () => {
+  document.body.classList.remove('locked');
+  history.replaceState(null, '', location.pathname + location.search);
+});
+document.getElementById('detail-close').addEventListener('click', closeProject);
+dlg.addEventListener('click', e => { if (e.target === dlg) closeProject(); });
+
 document.getElementById('project-list').replaceChildren(...projects.map(p => {
   const art = el('article', 'project');
   const left = el('div', 'left');
-  const links = el('div', 'plinks');
-  p.links.forEach(([label, href]) => { const a = el('a', null, label + ' ↗'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; links.append(a); });
-  if (p.note) links.append(el('span', 'note', p.note));
-  left.append(el('h3', null, p.name), links);
+  const more = el('button', 'more', 'View project →');
+  more.type = 'button';
+  more.setAttribute('aria-label', 'View details for ' + p.name);
+  left.append(el('h3', null, p.name), more);
   const right = el('div', 'right');
   const tags = el('div', 'tags');
   p.tags.forEach(t => tags.append(el('span', 'tag', t)));
   right.append(el('p', null, p.desc), tags);
   art.append(left, right);
+  art.addEventListener('click', () => openProject(p));
   return art;
 }));
+
+const fromHash = projects.find(p => '#' + p.id === location.hash);
+if (fromHash) openProject(fromHash, false);
 
 document.getElementById('skill-groups').replaceChildren(...skills.map(([name, items]) => {
   const g = el('div', 'group');
