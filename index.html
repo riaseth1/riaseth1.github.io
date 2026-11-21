@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ria Sethi</title>
+<meta name="description" content="Ria Sethi studies CS and Data Science at UC Berkeley and builds things in AI, cybersecurity, and entrepreneurship.">
+<meta property="og:title" content="Ria Sethi">
+<meta property="og:description" content="Student at UC Berkeley studying CS and Data Science, interested in AI, cybersecurity, and entrepreneurship.">
+<meta property="og:image" content="ria.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👋</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500&family=Hanken+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f7fc;
+  --ink: #111111;
+  --body: #2a2d35;
+  --muted: #565c6b;
+  --line: #d5dae6;
+  --soft: #e3e7f0;
+  --blue: #2b59ff;
+  --blue-soft: #e3eaff;
+  --head: 'Lexend', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Hanken Grotesk', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: var(--ink); text-decoration: none; transition: color .2s ease; }
+a:hover { color: var(--blue); }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 32px 40px 40px; display: flex; flex-direction: column; gap: 120px; }
+h1, h2, h3, .big-link { font-family: var(--head); font-weight: 500; letter-spacing: -0.045em; }
+
+nav { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 15px; padding-bottom: 20px; border-bottom: 1px solid var(--ink); }
+nav .links { display: flex; gap: 32px; flex-wrap: wrap; }
+
+header { display: flex; flex-direction: column; gap: 44px; }
+h1 { margin: 0; font-size: clamp(56px, 10vw, 120px); line-height: 1; }
+h1 .name { color: var(--blue); white-space: nowrap; }
+.intro { display: flex; flex-direction: column; gap: 28px; }
+.intro p { margin: 0; max-width: 680px; font-size: 21px; line-height: 1.6; color: var(--body); }
+.meta { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; font-size: 15px; }
+.meta .loc { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.meta a { border-bottom: 1px solid var(--ink); padding-bottom: 2px; }
+
+h2 { margin: 0; font-size: 44px; }
+section > h2.ruled { padding-bottom: 20px; border-bottom: 1px solid var(--ink); }
+
+#about { display: flex; flex-wrap: wrap; gap: 40px 80px; padding-top: 24px; border-top: 1px solid var(--ink); }
+#about h2 { flex: 1 1 100%; }
+.photo { flex: 1 1 300px; max-width: 420px; min-height: 420px; border-radius: 4px; overflow: hidden; display: flex; }
+.photo img { width: 100%; height: 100%; object-fit: cover; object-position: 52% 35%; display: block; }
+.about-text { flex: 999 1 480px; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 22px; font-size: 20px; line-height: 1.6; color: var(--body); }
+.about-text p { margin: 0; }
+
+#projects { display: flex; flex-direction: column; gap: 8px; }
+#projects h2 { margin-bottom: 16px; padding-bottom: 20px; border-bottom: 1px solid var(--ink); }
+.project-grid { display: flex; flex-direction: column; }
+.project { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); column-gap: 64px; row-gap: 14px; padding: 36px 0; border-bottom: 1px solid var(--line); }
+.project .left, .project .right { display: flex; flex-direction: column; gap: 14px; }
+.project h3 { margin: 0; font-size: 32px; line-height: 1.1; transition: color .2s ease; }
+.project:hover h3 { color: var(--blue); }
+.project p { margin: 0; font-size: 17px; line-height: 1.6; color: #3a3f4b; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px; }
+.tag { font-size: 13px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; }
+.links { display: flex; gap: 18px; flex-wrap: wrap; font-size: 15px; }
+.links a { border-bottom: 1.5px solid var(--blue); padding-bottom: 2px; }
+.links .note { color: var(--muted); }
+
+#skills { display: flex; flex-direction: column; gap: 28px; }
+.skills { display: flex; flex-wrap: wrap; background: #fff; border: 1px solid var(--ink); border-radius: 6px; overflow: hidden; }
+.group { flex: 1 1 240px; display: flex; flex-direction: column; gap: 18px; padding: 28px; border-right: 1px solid var(--soft); border-bottom: 1px solid var(--soft); }
+.group h3 { margin: 0; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 14px; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line); background: #f3f5fa; }
+
+footer { display: flex; flex-direction: column; gap: 56px; padding-top: 24px; border-top: 1px solid var(--ink); }
+.big-link { font-size: clamp(48px, 8vw, 88px); line-height: 1; }
+.big-link span { color: var(--blue); }
+.fine { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+
+@media (max-width: 900px) {
+  .project { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .wrap { padding: 24px 20px 32px; gap: 88px; }
+  h2 { font-size: 36px; }
+  .project h3 { font-size: 28px; }
+  .photo { min-height: 360px; max-width: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav aria-label="Main">
+  <a href="#top">Ria Sethi</a>
+  <div class="links">
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="mailto:founder@cyberforyouth.org">Email</a>
+  </div>
+</nav>
+
+<header id="top">
+  <h1>Hi, I'm <span class="name">Ria Sethi</span>. <span role="img" aria-label="waving hand">👋</span></h1>
+  <div class="intro">
+    <p>I'm a student at UC Berkeley studying CS and Data Science, interested in AI, cybersecurity, and entrepreneurship. I love exploring what's possible with technology and turning ideas into meaningful experiences.</p>
+    <div class="meta">
+      <span class="loc"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>San Francisco Bay Area</span>
+      <a href="https://github.com/riaseth1">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/ria-sethi1">LinkedIn ↗</a>
+    </div>
+  </div>
+</header>
+
+<section id="about" aria-labelledby="about-h">
+  <h2 id="about-h">About</h2>
+  <div class="photo"><img src="ria.jpg" alt="Ria Sethi"></div>
+  <div class="about-text">
+    <p>To me, technology is more than a means of solving problems; it's an experience that shapes how we interact with and understand the world around us. I'm fascinated by how something as simple as an idea can evolve into something that fundamentally changes someone's everyday experience.</p>
+    <p>I'm currently studying CS and Data Science at UC Berkeley, where I'm exploring my interests in AI, cybersecurity, and entrepreneurship.</p>
+    <p>Much of what inspires me comes from everyday interactions with people and the different ways we experience the same world. I find myself drawn to the problems that often go unnoticed and wondering how technology could change those experiences.</p>
+    <p>I believe the most meaningful technology is built not just around what is possible, but around what makes the human experience better.</p>
+  </div>
+</section>
+
+<section id="projects" aria-labelledby="proj-h">
+  <h2 id="proj-h">Projects</h2>
+  <div class="project-grid" id="project-list"></div>
+</section>
+
+<section id="skills" aria-labelledby="skills-h">
+  <h2 id="skills-h" class="ruled">Skills</h2>
+  <div class="skills" id="skill-groups"></div>
+</section>
+
+<footer>
+  <a class="big-link" href="mailto:founder@cyberforyouth.org">Let's talk <span>→</span></a>
+  <div class="fine">
+    <span>© 2026 Ria Sethi. All rights reserved.</span>
+    <span>San Francisco Bay Area · founder@cyberforyouth.org</span>
+  </div>
+</footer>
+
+</div>
+
+<script>
+const projects = [
+  { name: 'NVIDIA AgentOps', desc: 'A dashboard that shows what a fleet of hundreds of AI coding agents is doing, why, and what’s stuck, with a daily standup view, host health with time-to-full forecasts, failure and cost tracking by model, and a drill-down into any agent’s session.', tags: ['React', 'TypeScript', 'AI agents', 'Data visualization', 'FastAPI', 'PostgreSQL', 'Python', 'Vercel'], links: [], note: 'Private client project' },
+  { name: 'Lowball', desc: 'A negotiation agent for manufacturers that remembers every customer. It keeps a graph of past deals and calls, adapts its tactics to each buyer, and hands the deal to a person when things start going badly.', tags: ['Python', 'AI agents', 'Flask', 'OpenAI API', 'Kùzu graph DB', 'ElevenLabs', 'Docker'], links: [['Code', 'https://github.com/riaseth1/Lowball']] },
+  { name: 'Waypoint', desc: 'A team of Grok Bots that watches international students’ visa deadlines overnight, counts the days in code, and sends one morning brief with emails already drafted. Won first place at the Berkeley × Stanford Grok Bot Hackathon.', tags: ['JavaScript', 'Node.js', 'AI agents', 'Grok Bots', 'MCP', 'Redis', 'Twilio', 'Docker'], links: [['Live demo', 'https://waypoint-5o4r.onrender.com'], ['Code', 'https://github.com/riaseth1/Waypoint']] },
+  { name: 'Lifeboat', desc: 'Security for AI startups without a security team. It leaves bait only an automated attacker would follow, locks things down in under a second when it bites, then has Claude investigate while a person approves anything permanent.', tags: ['Python', 'AI agents', 'Claude API', 'Ollama', 'Incident response'], links: [['Code', 'https://github.com/riaseth1/LifeBoat']], note: 'Live demo paused' },
+  { name: 'CyberBoot', desc: 'An interactive cybersecurity bootcamp with phishing and password activities, a quiz, and a certificate at the end.', tags: ['JavaScript', 'HTML', 'CSS'], links: [['Live site', 'https://riaseth1.github.io/CyberBoot/'], ['Code', 'https://github.com/riaseth1/CyberBoot']] },
+  { name: 'Cyber for Youth', desc: 'I founded Cyber for Youth, a student-run nonprofit that teaches kids how to stay safe online, from scams to cyberbullying.', tags: ['Nonprofit leadership', 'Public speaking', 'Curriculum design', 'Workshops', 'Fundraising', 'Partnerships', 'Policy advocacy', 'Google Apps Script'], links: [['Website', 'https://cyberforyouth.org']] }
+];
+
+const skills = [
+  ['Languages', ['Python', 'JavaScript', 'TypeScript', 'Java', 'C++', 'Gleam', 'SQL', 'HTML / CSS']],
+  ['Front end', ['React', 'Data visualization', 'Dashboards', 'Responsive design']],
+  ['Back end and infrastructure', ['Node.js', 'Flask', 'FastAPI', 'PostgreSQL', 'Redis', 'Docker', 'Git', 'Linux', 'Vercel', 'Render']],
+  ['AI', ['AI agents', 'Tool calling', 'Claude API', 'OpenAI API', 'Grok Bots', 'MCP', 'Ollama', 'ElevenLabs', 'Graph and vector databases']],
+  ['Security', ['Incident response', 'Threat detection', 'Kali Linux', 'Phishing awareness', 'Security awareness training']],
+  ['Leadership', ['Nonprofit leadership', 'Public speaking', 'Curriculum design', 'Fundraising', 'Partnerships', 'Policy advocacy', 'Team management']]
+];
+
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+
+document.getElementById('project-list').replaceChildren(...projects.map(p => {
+  const art = el('article', 'project');
+  const left = el('div', 'left');
+  const links = el('div', 'links');
+  p.links.forEach(([label, href]) => { const a = el('a', null, label + ' ↗'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; links.append(a); });
+  if (p.note) links.append(el('span', 'note', p.note));
+  left.append(el('h3', null, p.name), links);
+  const right = el('div', 'right');
+  const tags = el('div', 'tags');
+  p.tags.forEach(t => tags.append(el('span', 'tag', t)));
+  right.append(el('p', null, p.desc), tags);
+  art.append(left, right);
+  return art;
+}));
+
+document.getElementById('skill-groups').replaceChildren(...skills.map(([name, items]) => {
+  const g = el('div', 'group');
+  g.append(el('h3', null, name));
+  const chips = el('div', 'chips');
+  items.forEach(s => chips.append(el('span', 'chip', s)));
+  g.append(chips);
+  return g;
+}));
+
+</script>
+</body>
+</html>
