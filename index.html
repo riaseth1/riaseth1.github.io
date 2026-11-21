@@ -1,349 +1,204 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Canvas Copilot — Prototype</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ria Sethi</title>
+<meta name="description" content="Ria Sethi studies CS and Data Science at UC Berkeley and builds things in AI, cybersecurity, and entrepreneurship.">
+<meta property="og:title" content="Ria Sethi">
+<meta property="og:description" content="Student at UC Berkeley studying CS and Data Science, interested in AI, cybersecurity, and entrepreneurship.">
+<meta property="og:image" content="https://riaseth1.github.io/cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://riaseth1.github.io/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ria Sethi">
+<meta name="twitter:image" content="https://riaseth1.github.io/cover.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👋</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500&family=Hanken+Grotesk:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --paper:#FAF8F4; --card:#FFFFFF; --ink:#20211E; --muted:#6E6E68;
-    --line:#E7E4DD; --line-2:#DAD6CD;
-    --crimson:#CC3B2E; --crimson-deep:#9E2B21; --crimson-tint:#FBEDEB;
-    --accent:#2F5EA8; --accent-tint:#E9F0FA;
-    --src-syllabus:#0C447C; --src-syllabus-bg:#E6F1FB;
-    --src-modules:#3C3489;  --src-modules-bg:#EEEDFE;
-    --src-announce:#7A4A08;  --src-announce-bg:#FAEEDA;
-    --src-portal:#0F6E56;   --src-portal-bg:#E1F5EE;
-    --src-email:#993556;    --src-email-bg:#FBEAF0;
-    --warn:#7A4A08; --warn-bg:#FCF3DF; --warn-line:#EBCB86;
-    --radius:14px;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:var(--paper); color:var(--ink); line-height:1.55;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:960px; margin:0 auto; padding:28px 20px 64px;}
-  .masthead{display:flex; align-items:center; gap:14px; margin-bottom:6px;}
-  .mark{width:44px; height:44px; border-radius:12px; background:var(--crimson);
-    display:flex; align-items:center; justify-content:center; color:#fff; flex:0 0 auto;}
-  .mark svg{width:24px; height:24px;}
-  .masthead h1{font-size:22px; font-weight:600; margin:0; letter-spacing:-0.01em;}
-  .masthead p{margin:2px 0 0; color:var(--muted); font-size:14px;}
-  .tag{margin-left:auto; font-size:12px; color:var(--crimson-deep); background:var(--crimson-tint);
-    border:1px solid #F1CFC9; padding:4px 10px; border-radius:999px; white-space:nowrap;}
-  .brief{margin:18px 0 22px; padding:14px 16px; background:var(--card); border:1px solid var(--line);
-    border-radius:12px; font-size:14px; color:var(--muted);}
-  .brief b{color:var(--ink); font-weight:600;}
-  .grid{display:grid; grid-template-columns:1fr 300px; gap:20px; align-items:start;}
-  @media (max-width:760px){ .grid{grid-template-columns:1fr;} .aside{order:2;} }
-  .app{background:var(--card); border:1px solid var(--line-2); border-radius:var(--radius);
-    overflow:hidden; display:flex; flex-direction:column; min-height:560px;}
-  .app-head{display:flex; align-items:center; gap:11px; padding:14px 16px; border-bottom:1px solid var(--line);}
-  .app-head .dot-mark{width:32px; height:32px; border-radius:9px; background:var(--crimson);
-    display:flex; align-items:center; justify-content:center; color:#fff;}
-  .app-head .dot-mark svg{width:18px; height:18px;}
-  .app-head .title{font-size:15px; font-weight:600;}
-  .app-head .sub{font-size:12px; color:var(--muted);}
-  .live{margin-left:auto; display:flex; align-items:center; gap:6px; font-size:12px; color:var(--src-portal);}
-  .live i{width:8px; height:8px; border-radius:50%; background:currentColor; display:inline-block;
-    animation:pulse 2s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
-  .thread{flex:1; padding:18px 16px; overflow-y:auto; display:flex; flex-direction:column; gap:14px;}
-  .msg{max-width:88%; animation:rise .28s ease;}
-  @keyframes rise{from{opacity:0; transform:translateY(6px);}to{opacity:1; transform:none;}}
-  .msg.user{align-self:flex-end;}
-  .msg.user .bubble{background:var(--accent-tint); color:#1a3a66; padding:10px 14px;
-    border-radius:14px 14px 4px 14px; font-size:14.5px;}
-  .msg.bot{align-self:flex-start; width:100%; max-width:100%;}
-  .bot-lead{font-size:14.5px; margin-bottom:10px;}
-  .item{border:1px solid var(--line); border-radius:12px; padding:11px 13px; margin-bottom:8px; background:#fff;}
-  .item-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
-  .item-name{font-size:14.5px; font-weight:600;}
-  .item-when{font-size:12.5px; color:var(--muted); white-space:nowrap;}
-  .item-when.due{color:var(--crimson-deep);}
-  .item-meta{margin-top:8px; display:flex; flex-wrap:wrap; align-items:center; gap:6px;}
-  .item-note{font-size:12px; color:var(--muted);}
-  .pill{font-size:11.5px; padding:2px 9px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; font-weight:500;}
-  .pill svg{width:12px; height:12px;}
-  .pill.syllabus{color:var(--src-syllabus); background:var(--src-syllabus-bg);}
-  .pill.modules{color:var(--src-modules); background:var(--src-modules-bg);}
-  .pill.announce{color:var(--src-announce); background:var(--src-announce-bg);}
-  .pill.portal{color:var(--src-portal); background:var(--src-portal-bg);}
-  .pill.email{color:var(--src-email); background:var(--src-email-bg);}
-  .alert{border:1px solid var(--warn-line); background:var(--warn-bg); border-radius:12px; padding:11px 13px;}
-  .alert-row{display:flex; gap:10px; align-items:flex-start;}
-  .alert svg.bell{width:18px; height:18px; color:var(--warn); flex:0 0 auto; margin-top:1px;}
-  .alert .a-title{font-size:13.5px; font-weight:600;}
-  .alert .a-body{font-size:13px; color:#5c5033; margin-top:2px;}
-  .alert .a-body b{color:var(--ink);}
-  .alert .a-src{font-size:11.5px; color:#8a7c58; margin-top:6px;}
-  .quote{border-left:3px solid var(--line-2); padding:2px 0 2px 12px; margin:8px 0 4px; font-size:13.5px; color:#3d3d38;}
-  .chips{padding:0 16px 12px; display:flex; flex-wrap:wrap; gap:8px;}
-  .chip{font-size:13px; color:var(--ink); background:#fff; border:1px solid var(--line-2);
-    padding:7px 12px; border-radius:999px; cursor:pointer; transition:background .12s,border-color .12s;}
-  .chip:hover{background:var(--paper); border-color:#c7c2b6;}
-  .composer{display:flex; align-items:center; gap:10px; padding:12px 14px; border-top:1px solid var(--line);}
-  .composer input{flex:1; height:42px; border:1px solid var(--line-2); border-radius:999px;
-    padding:0 16px; font-size:14px; font-family:inherit; outline:none; color:var(--ink); background:var(--paper);}
-  .composer input:focus{border-color:var(--crimson); background:#fff;}
-  .send{width:42px; height:42px; border:none; border-radius:50%; background:var(--crimson);
-    color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:0 0 auto;}
-  .send:hover{background:var(--crimson-deep);}
-  .send svg{width:19px; height:19px;}
-  .typing{display:flex; gap:4px; padding:4px 2px;}
-  .typing span{width:7px; height:7px; border-radius:50%; background:#c7c2b6; animation:blink 1.2s infinite;}
-  .typing span:nth-child(2){animation-delay:.2s;} .typing span:nth-child(3){animation-delay:.4s;}
-  @keyframes blink{0%,80%,100%{opacity:.3;}40%{opacity:1;}}
-  .aside .panel{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 16px; margin-bottom:16px;}
-  .panel h3{margin:0 0 10px; font-size:13px; font-weight:600; color:var(--muted); letter-spacing:.01em;}
-  .who{display:flex; align-items:center; gap:11px; margin-bottom:12px;}
-  .who .av{width:40px; height:40px; border-radius:50%; background:var(--crimson-tint); color:var(--crimson-deep);
-    display:flex; align-items:center; justify-content:center; font-weight:600; font-size:14px;}
-  .who .n{font-size:14px; font-weight:600;} .who .d{font-size:12.5px; color:var(--muted);}
-  .courses{list-style:none; padding:0; margin:0;}
-  .courses li{display:flex; align-items:center; gap:9px; font-size:13.5px; padding:5px 0; border-top:1px solid var(--line);}
-  .courses li:first-child{border-top:none;}
-  .swatch{width:9px; height:9px; border-radius:3px; flex:0 0 auto;}
-  .legend{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px;}
-  .legend li{display:flex; align-items:center; gap:9px; font-size:13px; color:var(--muted);}
-  .legend .pill{pointer-events:none;}
-  .demo-btn{width:100%; border:1px dashed var(--warn-line); background:var(--warn-bg); color:var(--warn);
-    font-family:inherit; font-size:13px; font-weight:500; padding:10px; border-radius:10px; cursor:pointer;}
-  .demo-btn:hover{background:#f9ecd0;}
-  .foot{margin-top:26px; font-size:12.5px; color:var(--muted); text-align:center; line-height:1.6;}
+:root {
+  --bg: #f5f7fc;
+  --ink: #111111;
+  --body: #2a2d35;
+  --muted: #565c6b;
+  --line: #d5dae6;
+  --soft: #e3e7f0;
+  --blue: #2b59ff;
+  --blue-soft: #e3eaff;
+  --head: 'Lexend', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Hanken Grotesk', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: var(--ink); text-decoration: none; transition: color .2s ease; }
+a:hover { color: var(--blue); }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 32px 40px 40px; display: flex; flex-direction: column; gap: 120px; }
+h1, h2, h3, .big-link { font-family: var(--head); font-weight: 500; letter-spacing: -0.045em; }
+
+nav { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 15px; padding-bottom: 20px; border-bottom: 1px solid var(--ink); }
+nav .links { display: flex; gap: 32px; flex-wrap: wrap; }
+
+header { display: flex; flex-direction: column; gap: 44px; }
+h1 { margin: 0; font-size: clamp(56px, 10vw, 120px); line-height: 1; }
+h1 .name { color: var(--blue); white-space: nowrap; }
+.intro { display: flex; flex-direction: column; gap: 28px; }
+.intro p { margin: 0; max-width: 680px; font-size: 21px; line-height: 1.6; color: var(--body); }
+.meta { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; font-size: 15px; }
+.meta .loc { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.meta a { border-bottom: 1px solid var(--ink); padding-bottom: 2px; }
+
+h2 { margin: 0; font-size: 44px; }
+section > h2.ruled { padding-bottom: 20px; border-bottom: 1px solid var(--ink); }
+
+#about { display: flex; flex-wrap: wrap; gap: 40px 80px; padding-top: 24px; border-top: 1px solid var(--ink); }
+#about h2 { flex: 1 1 100%; }
+.photo { flex: 1 1 300px; max-width: 420px; min-height: 420px; border-radius: 4px; overflow: hidden; display: flex; }
+.photo img { width: 100%; height: 100%; object-fit: cover; object-position: 52% 35%; display: block; }
+.about-text { flex: 999 1 480px; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 22px; font-size: 20px; line-height: 1.6; color: var(--body); }
+.about-text p { margin: 0; }
+
+#projects { display: flex; flex-direction: column; gap: 8px; }
+#projects h2 { margin-bottom: 16px; padding-bottom: 20px; border-bottom: 1px solid var(--ink); }
+.project-grid { display: flex; flex-direction: column; }
+.project { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); column-gap: 64px; row-gap: 14px; padding: 36px 0; border-bottom: 1px solid var(--line); }
+.project .left, .project .right { display: flex; flex-direction: column; gap: 14px; }
+.project h3 { margin: 0; font-size: 32px; line-height: 1.1; transition: color .2s ease; }
+.project:hover h3 { color: var(--blue); }
+.project p { margin: 0; font-size: 17px; line-height: 1.6; color: #3a3f4b; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px; }
+.tag { font-size: 13px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; }
+.links { display: flex; gap: 18px; flex-wrap: wrap; font-size: 15px; }
+.links a { border-bottom: 1.5px solid var(--blue); padding-bottom: 2px; }
+.links .note { color: var(--muted); }
+
+#skills { display: flex; flex-direction: column; gap: 28px; }
+.skills { display: flex; flex-wrap: wrap; background: #fff; border: 1px solid var(--ink); border-radius: 6px; overflow: hidden; }
+.group { flex: 1 1 240px; display: flex; flex-direction: column; gap: 18px; padding: 28px; border-right: 1px solid var(--soft); border-bottom: 1px solid var(--soft); }
+.group h3 { margin: 0; font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 14px; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line); background: #f3f5fa; }
+
+footer { display: flex; flex-direction: column; gap: 56px; padding-top: 24px; border-top: 1px solid var(--ink); }
+.big-link { font-size: clamp(48px, 8vw, 88px); line-height: 1; }
+.big-link span { color: var(--blue); }
+.fine { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+
+@media (max-width: 900px) {
+  .project { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .wrap { padding: 24px 20px 32px; gap: 88px; }
+  h2 { font-size: 36px; }
+  .project h3 { font-size: 28px; }
+  .photo { min-height: 360px; max-width: none; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="masthead">
-    <div class="mark" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4M3 5h4M6 17v4M4 19h4M13 3l2.5 6.5L22 12l-6.5 2.5L13 21l-2.5-6.5L4 12l6.5-2.5z"/></svg>
-    </div>
-    <div>
-      <h1>Canvas Copilot</h1>
-      <p>One place to ask about deadlines, readings, and where your classes are</p>
-    </div>
-    <span class="tag">Prototype · sample data</span>
+<nav aria-label="Main">
+  <a href="#top">Ria Sethi</a>
+  <div class="links">
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="mailto:founder@cyberforyouth.org">Email</a>
   </div>
+</nav>
 
-  <div class="brief">
-    <b>What this is:</b> a student-facing AI layer that reads what's already in Canvas (syllabi, modules,
-    announcements) plus the campus portal and email, and answers plain questions in one spot. Everything below runs on a
-    made-up student's week so you can try it live. Click a suggested question or type your own.
-  </div>
-
-  <div class="grid">
-    <div class="app">
-      <div class="app-head">
-        <div class="dot-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3l2.5 6.5L22 12l-6.5 2.5L13 21l-2.5-6.5L4 12l6.5-2.5z"/></svg>
-        </div>
-        <div>
-          <div class="title">Canvas Copilot</div>
-          <div class="sub">Fall 2026 · 3 courses connected</div>
-        </div>
-        <div class="live"><i></i>Live</div>
-      </div>
-
-      <div class="thread" id="thread">
-        <div class="msg bot">
-          <div class="bot-lead">Hi Ria, I've pulled together your three courses for this week. Ask me what's due, what to read, or where a class meets. Try a question below.</div>
-        </div>
-      </div>
-
-      <div class="chips" id="chips"></div>
-
-      <div class="composer">
-        <input id="input" type="text" placeholder="Ask about a deadline, reading, or room…" autocomplete="off" />
-        <button class="send" id="send" aria-label="Send">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-        </button>
-      </div>
-    </div>
-
-    <div class="aside">
-      <div class="panel">
-        <h3>Signed in as</h3>
-        <div class="who">
-          <div class="av">RS</div>
-          <div><div class="n">Ria S.</div><div class="d">1st year · sample profile</div></div>
-        </div>
-        <ul class="courses">
-          <li><span class="swatch" style="background:#2F5EA8"></span>CS 61A · Structure of Programs</li>
-          <li><span class="swatch" style="background:#0F6E56"></span>Data 8 · Foundations of Data Science</li>
-          <li><span class="swatch" style="background:#9E2B21"></span>R5B · College Writing</li>
-        </ul>
-      </div>
-
-      <div class="panel">
-        <h3>Where answers come from</h3>
-        <ul class="legend">
-          <li><span class="pill syllabus">Syllabus</span> due dates, policies</li>
-          <li><span class="pill modules">Modules</span> assignments, files</li>
-          <li><span class="pill announce">Announce</span> changes, notes</li>
-          <li><span class="pill portal">Portal</span> rooms, times</li>
-          <li><span class="pill email">Email</span> instructor updates</li>
-        </ul>
-      </div>
-
-      <div class="panel">
-        <h3>Demo the live-update</h3>
-        <button class="demo-btn" id="liveBtn">Simulate a room change →</button>
-      </div>
+<header id="top">
+  <h1>Hi, I'm <span class="name">Ria Sethi</span>. <span role="img" aria-label="waving hand">👋</span></h1>
+  <div class="intro">
+    <p>I'm a student at UC Berkeley studying CS and Data Science, interested in AI, cybersecurity, and entrepreneurship. I love exploring what's possible with technology and turning ideas into meaningful experiences.</p>
+    <div class="meta">
+      <span class="loc"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>San Francisco Bay Area</span>
+      <a href="https://github.com/riaseth1">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/ria-sethi1">LinkedIn ↗</a>
     </div>
   </div>
+</header>
 
-  <p class="foot">
-    Student-facing Canvas Copilot · concept prototype. Sample data only; not connected to a real Canvas account.<br>
-    Built to show how one AI layer could unify course info that's already scattered across an LMS.
-  </p>
+<section id="about" aria-labelledby="about-h">
+  <h2 id="about-h">About</h2>
+  <div class="photo"><img src="ria.jpg" alt="Ria Sethi"></div>
+  <div class="about-text">
+    <p>To me, technology is more than a means of solving problems; it's an experience that shapes how we interact with and understand the world around us. I'm fascinated by how something as simple as an idea can evolve into something that fundamentally changes someone's everyday experience.</p>
+    <p>I'm currently studying CS and Data Science at UC Berkeley, where I'm exploring my interests in AI, cybersecurity, and entrepreneurship.</p>
+    <p>Much of what inspires me comes from everyday interactions with people and the different ways we experience the same world. I find myself drawn to the problems that often go unnoticed and wondering how technology could change those experiences.</p>
+    <p>I believe the most meaningful technology is built not just around what is possible, but around what makes the human experience better.</p>
+  </div>
+</section>
+
+<section id="projects" aria-labelledby="proj-h">
+  <h2 id="proj-h">Projects</h2>
+  <div class="project-grid" id="project-list"></div>
+</section>
+
+<section id="skills" aria-labelledby="skills-h">
+  <h2 id="skills-h" class="ruled">Skills</h2>
+  <div class="skills" id="skill-groups"></div>
+</section>
+
+<footer>
+  <a class="big-link" href="mailto:founder@cyberforyouth.org">Let's talk <span>→</span></a>
+  <div class="fine">
+    <span>© 2026 Ria Sethi. All rights reserved.</span>
+    <span>San Francisco Bay Area · founder@cyberforyouth.org</span>
+  </div>
+</footer>
+
 </div>
 
 <script>
-const ICONS = {
-  syllabus:'<path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/>',
-  modules:'<path d="M4 5h16M4 12h16M4 19h16"/>',
-  announce:'<path d="M3 11l14-6v14L3 13z"/><path d="M17 8a4 4 0 010 8"/>',
-  portal:'<path d="M12 21s-7-5.2-7-11a7 7 0 0114 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
-  email:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'
-};
-function pill(kind,label){
-  return `<span class="pill ${kind}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[kind]}</svg>${label}</span>`;
-}
-function item({name,when,due,meta,note}){
-  const noteHtml = note ? `<span class="item-note">${note}</span>` : '';
-  return `<div class="item"><div class="item-top"><span class="item-name">${name}</span>
-    <span class="item-when ${due?'due':''}">${when}</span></div>
-    <div class="item-meta">${meta}${noteHtml}</div></div>`;
-}
-
-const ANSWERS = [
-  {
-    q:"What's due tomorrow?",
-    keys:["due tomorrow","tomorrow","due wed","what's due","whats due","due this","deadline"],
-    lead:"You have 2 things due tomorrow (Wed) and 1 later this week:",
-    body:
-      item({name:"CS 61A · Homework 4",when:"Tomorrow · 11:59 PM",due:true,
-        meta:pill('modules','Modules'),note:"cross-checked with syllabus"})+
-      item({name:"Data 8 · Lab 3 reading",when:"Tomorrow · before 2 PM",
-        meta:pill('syllabus','Syllabus')+pill('announce','Announcement')})+
-      item({name:"R5B · Essay 1 draft",when:"Friday · 5:00 PM",
-        meta:pill('modules','Modules'),note:"prompt posted this morning"})
-  },
-  {
-    q:"Where are my classes today?",
-    keys:["where","room","location","building","classes today","my class","where do i","where's my"],
-    lead:"Here's where you need to be today:",
-    body:
-      item({name:"CS 61A · Lecture",when:"10:00 AM · Wheeler 150",
-        meta:pill('portal','Campus portal')})+
-      item({name:"Data 8 · Discussion 104",when:"2:00 PM · Cory 241",
-        meta:pill('portal','Campus portal')+pill('email','Email'),note:"room updated, see alert"})+
-      item({name:"R5B · Seminar",when:"4:00 PM · Dwinelle 189",
-        meta:pill('portal','Campus portal')})
-  },
-  {
-    q:"What did we cover about recursion?",
-    keys:["recursion","cover","learn","covered","what did we","topic","review","search"],
-    lead:'Searching your CS 61A pages and slides for "recursion." Here is what turned up:',
-    body:
-      `<div class="quote">From <b>Lecture 8 notes</b>: a recursive function calls itself on a smaller input until it reaches a base case. Key example covered: computing factorial and summing a list.</div>`+
-      item({name:"Lecture 8 · Recursion (slides + notes)",when:"Posted Sep 8",
-        meta:pill('modules','Modules')})+
-      item({name:"Discussion 4 worksheet · tree recursion",when:"Practice problems",
-        meta:pill('modules','Modules')})+
-      item({name:"Homework 4",when:"Applies recursion",due:false,
-        meta:pill('syllabus','Syllabus'),note:"due tomorrow"})
-  },
-  {
-    q:"When is the Data 8 midterm?",
-    keys:["midterm","exam","test","final","when is the","data 8 midterm"],
-    lead:"Your next exam:",
-    body:
-      item({name:"Data 8 · Midterm 1",when:"Oct 9 · 7:00 to 9:00 PM",due:true,
-        meta:pill('syllabus','Syllabus')+pill('announce','Announcement'),note:"room TBA"})+
-      `<div class="quote">From the <b>syllabus</b>: covers everything through Lab 5. One handwritten cheat sheet allowed. No makeup exams without a Disabled Students' Program letter.</div>`
-  },
-  {
-    q:"When are office hours?",
-    keys:["office hours","office hour","get help","tutoring","oh ","professor available"],
-    lead:"Office hours across your courses this week:",
-    body:
-      item({name:"CS 61A · Prof. + TA hours",when:"Mon/Wed 1 to 3 PM · Soda 611",
-        meta:pill('syllabus','Syllabus')+pill('portal','Portal')})+
-      item({name:"Data 8 · Drop-in hours",when:"Thu 11 AM to 1 PM · Warren 101B",
-        meta:pill('announce','Announcement')})
-  }
+const projects = [
+  { name: 'NVIDIA AgentOps', desc: 'A dashboard that shows what a fleet of hundreds of AI coding agents is doing, why, and what’s stuck, with a daily standup view, host health with time-to-full forecasts, failure and cost tracking by model, and a drill-down into any agent’s session.', tags: ['React', 'TypeScript', 'AI agents', 'Data visualization', 'FastAPI', 'PostgreSQL', 'Python', 'Vercel'], links: [], note: 'Private client project' },
+  { name: 'Lowball', desc: 'A negotiation agent for manufacturers that remembers every customer. It keeps a graph of past deals and calls, adapts its tactics to each buyer, and hands the deal to a person when things start going badly.', tags: ['Python', 'AI agents', 'Flask', 'OpenAI API', 'Kùzu graph DB', 'ElevenLabs', 'Docker'], links: [['Code', 'https://github.com/riaseth1/Lowball']] },
+  { name: 'Waypoint', desc: 'A team of Grok Bots that watches international students’ visa deadlines overnight, counts the days in code, and sends one morning brief with emails already drafted. Won first place at the Berkeley × Stanford Grok Bot Hackathon.', tags: ['JavaScript', 'Node.js', 'AI agents', 'Grok Bots', 'MCP', 'Redis', 'Twilio', 'Docker'], links: [['Live demo', 'https://waypoint-5o4r.onrender.com'], ['Code', 'https://github.com/riaseth1/Waypoint']] },
+  { name: 'Lifeboat', desc: 'Security for AI startups without a security team. It leaves bait only an automated attacker would follow, locks things down in under a second when it bites, then has Claude investigate while a person approves anything permanent.', tags: ['Python', 'AI agents', 'Claude API', 'Ollama', 'Incident response'], links: [['Code', 'https://github.com/riaseth1/LifeBoat']], note: 'Live demo paused' },
+  { name: 'CyberBoot', desc: 'An interactive cybersecurity bootcamp with phishing and password activities, a quiz, and a certificate at the end.', tags: ['JavaScript', 'HTML', 'CSS'], links: [['Live site', 'https://riaseth1.github.io/CyberBoot/'], ['Code', 'https://github.com/riaseth1/CyberBoot']] },
+  { name: 'Cyber for Youth', desc: 'I founded Cyber for Youth, a student-run nonprofit that teaches kids how to stay safe online, from scams to cyberbullying.', tags: ['Nonprofit leadership', 'Public speaking', 'Curriculum design', 'Workshops', 'Fundraising', 'Partnerships', 'Policy advocacy', 'Google Apps Script'], links: [['Website', 'https://cyberforyouth.org']] }
 ];
 
-const FALLBACK = {
-  lead:"I can answer that once I'm connected to a real Canvas account. In this demo I know about deadlines, class locations, readings, exams, and office hours for the three sample courses. Try one of these:",
-  body:""
-};
+const skills = [
+  ['Languages', ['Python', 'JavaScript', 'TypeScript', 'Java', 'C++', 'Gleam', 'SQL', 'HTML / CSS']],
+  ['Front end', ['React', 'Data visualization', 'Dashboards', 'Responsive design']],
+  ['Back end and infrastructure', ['Node.js', 'Flask', 'FastAPI', 'PostgreSQL', 'Redis', 'Docker', 'Git', 'Linux', 'Vercel', 'Render']],
+  ['AI', ['AI agents', 'Tool calling', 'Claude API', 'OpenAI API', 'Grok Bots', 'MCP', 'Ollama', 'ElevenLabs', 'Graph and vector databases']],
+  ['Security', ['Incident response', 'Threat detection', 'Kali Linux', 'Phishing awareness', 'Security awareness training']],
+  ['Leadership', ['Nonprofit leadership', 'Public speaking', 'Curriculum design', 'Fundraising', 'Partnerships', 'Policy advocacy', 'Team management']]
+];
 
-const thread = document.getElementById('thread');
-const input  = document.getElementById('input');
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 
-function addUser(text){
-  const el=document.createElement('div'); el.className='msg user';
-  el.innerHTML=`<div class="bubble">${text}</div>`;
-  thread.appendChild(el); scroll();
-}
-function addTyping(){
-  const el=document.createElement('div'); el.className='msg bot'; el.id='typing';
-  el.innerHTML=`<div class="typing"><span></span><span></span><span></span></div>`;
-  thread.appendChild(el); scroll();
-}
-function addBot(lead,body){
-  const t=document.getElementById('typing'); if(t) t.remove();
-  const el=document.createElement('div'); el.className='msg bot';
-  el.innerHTML=`<div class="bot-lead">${lead}</div>${body||''}`;
-  thread.appendChild(el); scroll();
-}
-function scroll(){ thread.scrollTop = thread.scrollHeight; }
+document.getElementById('project-list').replaceChildren(...projects.map(p => {
+  const art = el('article', 'project');
+  const left = el('div', 'left');
+  const links = el('div', 'links');
+  p.links.forEach(([label, href]) => { const a = el('a', null, label + ' ↗'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; links.append(a); });
+  if (p.note) links.append(el('span', 'note', p.note));
+  left.append(el('h3', null, p.name), links);
+  const right = el('div', 'right');
+  const tags = el('div', 'tags');
+  p.tags.forEach(t => tags.append(el('span', 'tag', t)));
+  right.append(el('p', null, p.desc), tags);
+  art.append(left, right);
+  return art;
+}));
 
-function findAnswer(text){
-  const t=text.toLowerCase();
-  for(const a of ANSWERS){ if(a.keys.some(k=>t.includes(k))) return a; }
-  return null;
-}
-function respond(text){
-  const a=findAnswer(text);
-  addTyping();
-  setTimeout(()=>{
-    if(a){ addBot(a.lead,a.body); }
-    else {
-      const suggestions = ANSWERS.slice(0,4).map(x=>`<div class="item"><div class="item-top"><span class="item-name" style="font-weight:500;color:var(--accent);cursor:pointer" onclick="ask('${x.q.replace(/'/g,"\\'")}')">${x.q}</span></div></div>`).join('');
-      addBot(FALLBACK.lead, suggestions);
-    }
-  }, 600);
-}
-function ask(text){ addUser(text); respond(text); }
+document.getElementById('skill-groups').replaceChildren(...skills.map(([name, items]) => {
+  const g = el('div', 'group');
+  g.append(el('h3', null, name));
+  const chips = el('div', 'chips');
+  items.forEach(s => chips.append(el('span', 'chip', s)));
+  g.append(chips);
+  return g;
+}));
 
-document.getElementById('send').addEventListener('click',send);
-input.addEventListener('keydown',e=>{ if(e.key==='Enter') send(); });
-function send(){ const v=input.value.trim(); if(!v) return; input.value=''; ask(v); }
-
-const chipWrap=document.getElementById('chips');
-ANSWERS.forEach(a=>{
-  const c=document.createElement('button'); c.className='chip'; c.textContent=a.q;
-  c.onclick=()=>ask(a.q); chipWrap.appendChild(c);
-});
-
-document.getElementById('liveBtn').addEventListener('click',()=>{
-  const el=document.createElement('div'); el.className='msg bot';
-  el.innerHTML=`<div class="alert"><div class="alert-row">
-    <svg class="bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
-    <div><div class="a-title">Heads up, your Data 8 discussion moved</div>
-    <div class="a-body">Room changed from <b>Dwinelle 145</b> to <b>Cory 241</b> for this Friday. I've updated your schedule automatically. No need to hunt through email.</div>
-    <div class="a-src">Source: instructor email · just now</div></div>
-  </div></div>`;
-  thread.appendChild(el); scroll();
-});
 </script>
 </body>
 </html>
