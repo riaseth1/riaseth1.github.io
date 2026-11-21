@@ -96,6 +96,9 @@ footer { display: flex; flex-direction: column; gap: 56px; padding-top: 24px; bo
 .gallery img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--line); }
 .gallery.odd img:first-child, .gallery img:only-child { grid-column: 1 / -1; }
 .gallery[hidden] { display: none; }
+.gallery.stack { grid-template-columns: 1fr; }
+.imgnote { margin: -16px 0 0; font-size: 14px; color: var(--muted); }
+.imgnote[hidden] { display: none; }
 @media (max-width: 640px) { .gallery { grid-template-columns: 1fr; } }
 dialog.detail { width: min(820px, calc(100vw - 32px)); max-height: calc(100vh - 48px); padding: 0; border: 1px solid var(--ink); border-radius: 10px; background: #fff; color: var(--ink); box-shadow: 0 30px 80px rgba(17, 24, 39, .18); }
 dialog.detail::backdrop { background: rgba(17, 24, 39, .45); backdrop-filter: blur(3px); }
@@ -198,6 +201,7 @@ body.locked { overflow: hidden; }
       <button class="close" type="button" aria-label="Close" id="detail-close"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
     </div>
     <div class="gallery" id="detail-gallery"></div>
+    <p class="imgnote" id="detail-imgnote" hidden></p>
     <div class="plinks" id="detail-links"></div>
     <div id="detail-body" style="display: flex; flex-direction: column; gap: 28px"></div>
     <section>
@@ -210,7 +214,7 @@ body.locked { overflow: hidden; }
 <script>
 const projects = [
   {
-    id: 'agentops', name: 'NVIDIA AgentOps',
+    id: 'agentops', stack: true, imgNote: 'Shown with sample data.', imgs: [['images/agentops-overview.jpg', 'AgentOps dashboard overview with daily standup and organization health'], ['images/agentops-details.jpg', 'AgentOps dashboard with 30-day activity, agent health, model performance and recent alerts']], name: 'NVIDIA AgentOps',
     desc: 'A dashboard that shows what a fleet of hundreds of AI coding agents is doing, why, and what’s stuck, with a daily standup view, host health with time-to-full forecasts, failure and cost tracking by model, and a drill-down into any agent’s session.',
     tags: ['React', 'TypeScript', 'AI agents', 'Data visualization', 'FastAPI', 'PostgreSQL', 'Python', 'Vercel'],
     links: [], note: 'Private client project',
@@ -314,9 +318,12 @@ function openProject(p, push = true) {
   document.getElementById('detail-summary').textContent = p.desc;
   const gal = document.getElementById('detail-gallery');
   const pics = p.imgs || [];
-  gal.className = 'gallery' + (pics.length % 2 ? ' odd' : '');
+  gal.className = 'gallery' + (p.stack ? ' stack' : pics.length % 2 ? ' odd' : '');
   gal.replaceChildren(...pics.map(([src, alt]) => { const im = el('img'); im.src = src; im.alt = alt; return im; }));
   gal.hidden = !pics.length;
+  const note = document.getElementById('detail-imgnote');
+  note.textContent = p.imgNote || '';
+  note.hidden = !p.imgNote;
   const links = document.getElementById('detail-links');
   links.replaceChildren();
   p.links.forEach(([label, href]) => { const a = el('a', null, label + ' ↗'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; links.append(a); });
