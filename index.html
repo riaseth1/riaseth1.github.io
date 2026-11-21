@@ -92,10 +92,11 @@ footer { display: flex; flex-direction: column; gap: 56px; padding-top: 24px; bo
 .project:hover .more, .project .more:focus-visible { color: var(--blue); border-color: var(--blue); }
 .project .more:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
 
-.project .thumb { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 8px; border: 1px solid var(--line); display: block; transition: transform .25s ease, box-shadow .25s ease; }
-.project:hover .thumb { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(17, 24, 39, .12); }
-.detail-img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 8px; border: 1px solid var(--line); display: block; }
-.detail-img[hidden] { display: none; }
+.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+.gallery img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--line); }
+.gallery.odd img:first-child, .gallery img:only-child { grid-column: 1 / -1; }
+.gallery[hidden] { display: none; }
+@media (max-width: 640px) { .gallery { grid-template-columns: 1fr; } }
 dialog.detail { width: min(820px, calc(100vw - 32px)); max-height: calc(100vh - 48px); padding: 0; border: 1px solid var(--ink); border-radius: 10px; background: #fff; color: var(--ink); box-shadow: 0 30px 80px rgba(17, 24, 39, .18); }
 dialog.detail::backdrop { background: rgba(17, 24, 39, .45); backdrop-filter: blur(3px); }
 dialog.detail[open] { animation: pop .22s ease; }
@@ -196,7 +197,7 @@ body.locked { overflow: hidden; }
       </div>
       <button class="close" type="button" aria-label="Close" id="detail-close"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg></button>
     </div>
-    <img class="detail-img" id="detail-img" alt="">
+    <div class="gallery" id="detail-gallery"></div>
     <div class="plinks" id="detail-links"></div>
     <div id="detail-body" style="display: flex; flex-direction: column; gap: 28px"></div>
     <section>
@@ -220,7 +221,7 @@ const projects = [
     ]
   },
   {
-    id: 'lowball', img: 'images/lowball.jpg', imgAlt: 'Lowball showing three live negotiations side by side', name: 'Lowball',
+    id: 'lowball', imgs: [['images/lowball.jpg', 'Lowball showing three live negotiations side by side']], name: 'Lowball',
     desc: 'A negotiation agent for manufacturers that remembers every customer. It keeps a graph of past deals and calls, adapts its tactics to each buyer, and hands the deal to a person when things start going badly.',
     tags: ['Python', 'AI agents', 'Flask', 'OpenAI API', 'Kùzu graph DB', 'ElevenLabs', 'Docker'],
     links: [['Code', 'https://github.com/riaseth1/Lowball']],
@@ -231,18 +232,22 @@ const projects = [
     ]
   },
   {
-    id: 'waypoint', img: 'images/waypoint.jpg', imgAlt: 'Waypoint sign-in page with the visa deadline team', name: 'Waypoint',
+    id: 'waypoint', imgs: [['images/waypoint-bots.jpg', 'Waypoint logo with its five bots: Manager, Case Clerk, Scout, Intake Clerk and Messenger'], ['images/waypoint-diagram.jpg', 'Diagram of how the Waypoint bots work together'], ['images/waypoint-team.jpg', 'The Waypoint team']], name: 'Waypoint',
     desc: 'A team of Grok Bots that watches international students’ visa deadlines overnight, counts the days in code, and sends one morning brief with emails already drafted. Won first place at the Berkeley × Stanford Grok Bot Hackathon.',
     tags: ['JavaScript', 'Node.js', 'AI agents', 'Grok Bots', 'MCP', 'Redis', 'Twilio', 'Docker'],
     links: [['Live demo', 'https://waypoint-5o4r.onrender.com'], ['Code', 'https://github.com/riaseth1/Waypoint']],
     sections: [
-      ['The problem', 'For most students a missed deadline costs points. For an international student it can cost the right to stay in the country. Every visa has its own clock, the rules change when a student’s status changes, and none of the government sites they have to check have alerts.'],
+      ['Our story', { paras: [
+        'For most of us, missing a deadline means losing a few points on an assignment. For our international friends, it could mean losing their right to stay in the U.S.',
+        'Seeing so many of our friends navigate immigration paperwork, changing policies, and visa deadlines on top of everything else that comes with being a college student made us realize how much easier this process should be.',
+        'Waypoint is a team of autonomous AI agents, built in just four hours, that monitors immigration cases, tracks policy changes, manages personalized visa deadlines, and proactively alerts students while keeping them in control.'
+      ] }],
       ['What it does', ['Every night a Manager Bot wakes up a team of workers', 'One reads the government case-status site, another searches X, official pages and the student’s email for rule changes and dates', 'Waypoint’s own code counts the days and marks each deadline Act now, Watch or Clear, so the AI never does date math', 'The student wakes up to one brief, and nothing is sent to another person until they approve it']],
       ['How it works', 'Five Grok Bots (Manager, Case Clerk, Scout, Messenger and Intake Clerk) each have one job and connect to Waypoint through an MCP connector. The site is a dependency-free Node app on Render, data is saved in Upstash Redis, and texts go out through Twilio.']
     ]
   },
   {
-    id: 'lifeboat', img: 'images/lifeboat.jpg', imgAlt: 'Lifeboat banner: a lifeboat dangles a fake key that a robot shark bites', name: 'Lifeboat',
+    id: 'lifeboat', imgs: [['images/lifeboat.jpg', 'Lifeboat banner: a lifeboat dangles a fake key that a robot shark bites']], name: 'Lifeboat',
     desc: 'Security for AI startups without a security team. It leaves bait only an automated attacker would follow, locks things down in under a second when it bites, then has Claude investigate while a person approves anything permanent.',
     tags: ['Python', 'AI agents', 'Claude API', 'Ollama', 'Incident response'],
     links: [['Code', 'https://github.com/riaseth1/LifeBoat']], note: 'Live demo paused',
@@ -254,23 +259,25 @@ const projects = [
     ]
   },
   {
-    id: 'cyberboot', img: 'images/cyberboot.jpg', imgAlt: 'CyberBoot welcome screen', name: 'CyberBoot',
+    id: 'cyberboot', imgs: [['images/cyberboot.jpg', 'CyberBoot welcome screen']], name: 'CyberBoot',
     desc: 'An interactive cybersecurity bootcamp with phishing and password activities, a quiz, and a certificate at the end.',
     tags: ['JavaScript', 'HTML', 'CSS'],
     links: [['Live site', 'https://riaseth1.github.io/CyberBoot/'], ['Code', 'https://github.com/riaseth1/CyberBoot']],
     sections: [
-      ['The problem', 'There wasn\u2019t much interactive security training out there, and most of what existed was just boring slides and videos that nobody remembers.'],
-      ['What it is', 'A hands-on online safety course that runs in the browser. Instead of reading about scams, you practice spotting them.'],
+      ['The story behind CyberBoot', { paras: [
+        'We’re taught not to click suspicious links or share personal information, but how often do we actually get to practice making those decisions before encountering them in real life?',
+        'CyberBoot was built around the idea that online safety should be learned through experience. By recreating everyday digital interactions in a safe environment, it gives people the opportunity to make mistakes, learn from them, and build better habits.'
+      ] }],
       ['What’s inside', ['A practice inbox where you decide which emails are phishing', 'Chat scenarios where you choose the safest reply', 'A password checker that shows how strong your password is', 'A quiz with a running score, and a certificate with your name when you finish']]
     ]
   },
   {
-    id: 'c4y', img: 'images/cyberforyouth.jpg', imgAlt: 'Cyber for Youth website homepage', name: 'Cyber for Youth', tagsLabel: 'Skills',
+    id: 'c4y', imgs: [['images/c4y-workshop-1.jpg', 'Ria with kids holding drawings at a Cyber for Youth workshop'], ['images/c4y-workshop-2.jpg', 'Students holding an online safety poster they made at a Cyber for Youth workshop']], name: 'Cyber for Youth', tagsLabel: 'Skills',
     desc: 'I founded Cyber for Youth, a student-run nonprofit that teaches kids how to stay safe online, from scams to cyberbullying.',
     tags: ['Nonprofit leadership', 'Public speaking', 'Curriculum design', 'Workshops', 'Fundraising', 'Partnerships', 'Policy advocacy', 'Google Apps Script'],
     links: [['Website', 'https://cyberforyouth.org']],
     sections: [
-      ['Turning my experience into something bigger', { paras: [
+      ['My story', { paras: [
         'When I was 14, an anonymous Instagram account leaked my home address, and I began receiving threats. Something as simple as hearing my doorbell ring became terrifying. When I turned to my school for help, I was told that what happened online was outside their jurisdiction.',
         'But I knew I wasn’t the only one experiencing this, and I couldn’t accept that nothing could be done.',
         'That’s how Cyber for Youth began. What started as an effort to change my school district’s cyberbullying policy grew into a global youth-led nonprofit.',
@@ -305,8 +312,11 @@ const dlg = document.getElementById('detail');
 function openProject(p, push = true) {
   document.getElementById('detail-title').textContent = p.name;
   document.getElementById('detail-summary').textContent = p.desc;
-  const dimg = document.getElementById('detail-img');
-  if (p.img) { dimg.src = p.img; dimg.alt = p.imgAlt || ''; dimg.hidden = false; } else { dimg.removeAttribute('src'); dimg.hidden = true; }
+  const gal = document.getElementById('detail-gallery');
+  const pics = p.imgs || [];
+  gal.className = 'gallery' + (pics.length % 2 ? ' odd' : '');
+  gal.replaceChildren(...pics.map(([src, alt]) => { const im = el('img'); im.src = src; im.alt = alt; return im; }));
+  gal.hidden = !pics.length;
   const links = document.getElementById('detail-links');
   links.replaceChildren();
   p.links.forEach(([label, href]) => { const a = el('a', null, label + ' ↗'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; links.append(a); });
@@ -361,7 +371,6 @@ document.getElementById('project-list').replaceChildren(...projects.map(p => {
   more.type = 'button';
   more.setAttribute('aria-label', 'View details for ' + p.name);
   left.append(el('h3', null, p.name));
-  if (p.img) { const im = el('img', 'thumb'); im.src = p.img; im.alt = p.imgAlt || ''; im.loading = 'lazy'; left.append(im); }
   left.append(more);
   const right = el('div', 'right');
   const tags = el('div', 'tags');
