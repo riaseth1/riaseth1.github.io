@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Ria Sethi">
 <meta name="twitter:image" content="https://riaseth1.github.io/cover.png">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232b59ff'/><text x='50%25' y='50%25' dy='.35em' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-size='38' font-weight='600' fill='white'>R</text></svg>"><text y='.9em' font-size='90'>👋</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232b59ff'/><text x='50%25' y='50%25' dy='.35em' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-size='38' font-weight='600' fill='white'>R</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500&family=Hanken+Grotesk:wght@400;500&display=swap" rel="stylesheet">
@@ -71,9 +71,9 @@ section > h2.ruled { padding-bottom: 20px; border-bottom: 1px solid var(--ink); 
 .project p { margin: 0; font-size: 17px; line-height: 1.6; color: #3a3f4b; }
 .tags { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px; }
 .tag { font-size: 13px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; }
-.links { display: flex; gap: 18px; flex-wrap: wrap; font-size: 15px; }
-.links a { border-bottom: 1.5px solid var(--blue); padding-bottom: 2px; }
-.links .note { color: var(--muted); }
+.plinks { display: flex; gap: 18px; flex-wrap: wrap; font-size: 15px; }
+.plinks a { border-bottom: 1.5px solid var(--blue); padding-bottom: 2px; }
+.plinks .note { color: var(--muted); }
 
 #skills { display: flex; flex-direction: column; gap: 28px; }
 .skills { display: flex; flex-wrap: wrap; background: #fff; border: 1px solid var(--ink); border-radius: 6px; overflow: hidden; }
@@ -178,7 +178,7 @@ const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls)
 document.getElementById('project-list').replaceChildren(...projects.map(p => {
   const art = el('article', 'project');
   const left = el('div', 'left');
-  const links = el('div', 'links');
+  const links = el('div', 'plinks');
   p.links.forEach(([label, href]) => { const a = el('a', null, label + ' ↗'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; links.append(a); });
   if (p.note) links.append(el('span', 'note', p.note));
   left.append(el('h3', null, p.name), links);
